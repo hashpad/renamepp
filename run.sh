@@ -2,4 +2,4 @@
 
 cmake -B build
 (cd build; make)
-./build/rename
+# ./build/rename

@@ -19,10 +19,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
+FILE(GLOB ALL_SRCS src/*)
 
 add_executable(
 	rename
-	main.cpp
+	${ALL_SRCS}
 )
 
 target_link_libraries(rename ${CURSES_LIBRARIES})
