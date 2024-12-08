@@ -3,10 +3,11 @@
 #include "States.h"
 #include "UI.h"
 #include <filesystem>
+#include <memory>
 
 class Context {
 private:
-    UI* ui;
+    UI ui;
 
     std::string current_filename;
     std::filesystem::path current_file_path;
@@ -22,7 +23,7 @@ public:
     Context();
     void init();
 
-    UI* const get_ui() const;
+    UI& get_ui();
 
     const std::string& get_current_filename() const;
     void set_current_filename(const std::string& name);
@@ -49,7 +50,6 @@ public:
     bool is_file_hooked() const;
     ~Context()
     {
-        delete this->ui;
         endwin();
     };
 };

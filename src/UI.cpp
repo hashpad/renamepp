@@ -1,10 +1,17 @@
 #include "UI.h"
 #include "States.h"
+#include <memory>
 #include <ncurses.h>
 #include <string>
 
 UI::UI(GUIState* gui_state)
     : gui_state(gui_state)
+    , text_length(0)
+{
+}
+UI::UI(std::unique_ptr<GUIState> gui_state)
+    : gui_state(std::move(gui_state))
+    , text_length(0)
 {
 }
 void UI::clear_screen()
@@ -47,9 +54,9 @@ void UI::show_menu(int highlighted_option)
 }
 GUIState* const UI::get_gui_state() const
 {
-    return this->gui_state;
+    return this->gui_state.get();
 }
 void UI::set_gui_state(GUIState* gui_state)
 {
-    this->gui_state = gui_state;
+    this->gui_state.reset(gui_state);
 }

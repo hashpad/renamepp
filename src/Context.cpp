@@ -1,11 +1,11 @@
 #include "Context.h"
+#include "States.h"
+#include <memory>
 
 Context::Context()
+    : ui(UI(std::make_unique<MenuState>()))
 {
     this->cursorState = CursorState::HIDDEN;
-    MenuState* ms = new MenuState();
-    UI* ui = new UI(ms);
-    this->ui = ui;
 }
 void Context::init()
 {
@@ -30,14 +30,14 @@ void Context::init()
         this->hook_file();
         this->set_opened_once(false);
         while (this->is_file_hooked()) {
-            this->ui->get_gui_state()->show_gui(*this);
+            this->ui.get_gui_state()->script(*this);
         }
     }
 }
 
-UI* const Context::get_ui() const
+UI& Context::get_ui()
 {
-    return this->ui;
+    return ui;
 }
 
 const std::string& Context::get_current_filename() const

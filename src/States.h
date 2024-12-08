@@ -24,7 +24,9 @@ const std::map<Option, std::string> OPTIONS_STRING = {
 
 class GUIState {
 public:
+    virtual void script(Context& ctx) = 0;
     virtual void show_gui(Context& ctx) = 0;
+    virtual void handle_events(Context& ctx) = 0;
     virtual ~GUIState() { };
 };
 
@@ -34,11 +36,19 @@ private:
     void set_highlight(int highlight);
 
 public:
-    void show_gui(Context& ctx);
+    virtual void script(Context& ctx) override;
+    virtual void show_gui(Context& ctx) override;
+    virtual void handle_events(Context& ctx) override;
     ~MenuState() { };
 };
 
 class RenameState : public GUIState {
-    void show_gui(Context& ctx);
+private:
+    std::string name;
+
+public:
+    virtual void script(Context& ctx) override;
+    virtual void show_gui(Context& ctx) override;
+    virtual void handle_events(Context& ctx) override;
     ~RenameState() { };
 };

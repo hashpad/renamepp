@@ -1,14 +1,16 @@
 #pragma once
 #include "States.h"
 #include <iostream>
+#include <memory>
 class GUIState;
 class UI {
 private:
     int text_length;
-    GUIState* gui_state;
+    std::unique_ptr<GUIState> gui_state;
 
 public:
     UI(GUIState* gui_state);
+    UI(std::unique_ptr<GUIState> gui_state);
     void init();
     void detroy();
 
@@ -22,6 +24,5 @@ public:
     void set_gui_state(GUIState* gui_state);
     ~UI()
     {
-        delete gui_state;
     }
 };
