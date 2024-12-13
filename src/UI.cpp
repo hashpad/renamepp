@@ -11,6 +11,7 @@ UI::UI(std::unique_ptr<GUIState>&& gui_state)
 }
 void UI::clear_screen()
 {
+    flushinp();
     clear();
     this->text_length = 0;
     curs_set(0);
@@ -27,6 +28,7 @@ std::string UI::prompt(const std::string& prompt)
     this->append(prompt);
     curs_set(1);
     char input_value[512];
+    flushinp();
     echo();
     mvgetstr(0, text_length, input_value);
     noecho();
