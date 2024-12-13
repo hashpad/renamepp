@@ -1,7 +1,7 @@
 #pragma once
 #include "States.h"
-#include <iostream>
 #include <memory>
+
 class GUIState;
 class UI {
 private:
@@ -9,8 +9,7 @@ private:
     std::unique_ptr<GUIState> gui_state;
 
 public:
-    UI(GUIState* gui_state);
-    UI(std::unique_ptr<GUIState> gui_state);
+    UI(std::unique_ptr<GUIState>&& gui_state);
     void init();
     void detroy();
 
@@ -20,9 +19,6 @@ public:
 
     void clear_screen();
 
-    GUIState* const get_gui_state() const;
-    void set_gui_state(GUIState* gui_state);
-    ~UI()
-    {
-    }
+    GUIState& get_gui_state() const;
+    void set_gui_state(std::unique_ptr<GUIState>&& gui_state);
 };

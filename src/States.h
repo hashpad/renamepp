@@ -1,6 +1,6 @@
 #pragma once
-#include "helpers.h"
 #include <map>
+#include <string>
 
 class Context;
 
@@ -10,16 +10,16 @@ enum CursorState {
 };
 enum Option {
     RENAME,
-    OPEN,
     NEXT,
     PREV,
+    OPEN,
 };
 
 const std::map<Option, std::string> OPTIONS_STRING = {
-    { RENAME, "rename" },
-    { OPEN, "open" },
-    { NEXT, "next" },
-    { PREV, "prev" },
+    { Option::RENAME, "rename" },
+    { Option::OPEN, "open" },
+    { Option::NEXT, "next" },
+    { Option::PREV, "prev" },
 };
 
 class GUIState {
@@ -31,10 +31,6 @@ public:
 };
 
 class MenuState : public GUIState {
-private:
-    int highlight;
-    void set_highlight(int highlight);
-
 public:
     virtual void script(Context& ctx) override;
     virtual void show_gui(Context& ctx) override;
@@ -51,4 +47,9 @@ public:
     virtual void show_gui(Context& ctx) override;
     virtual void handle_events(Context& ctx) override;
     ~RenameState() { };
+};
+class DeleteState : public GUIState {
+    virtual void script(Context& ctx) override;
+    virtual void show_gui(Context& ctx) override;
+    virtual void handle_events(Context& ctx) override;
 };

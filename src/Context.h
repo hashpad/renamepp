@@ -3,11 +3,14 @@
 #include "States.h"
 #include "UI.h"
 #include <filesystem>
-#include <memory>
+#include <ncurses.h>
+#include <string>
+#include <vector>
 
 class Context {
 private:
     UI ui;
+    bool running;
 
     std::string current_filename;
     std::filesystem::path current_file_path;
@@ -20,10 +23,11 @@ private:
     CursorState cursorState;
 
 public:
-    Context();
-    void init();
+    Context(const std::filesystem::path& path, const std::vector<std::string>& file_types);
 
     UI& get_ui();
+
+    void stop();
 
     const std::string& get_current_filename() const;
     void set_current_filename(const std::string& name);
@@ -44,6 +48,8 @@ public:
 
     int get_current_option() const;
     void set_current_option(int value);
+    int get_next_option() const;
+    int get_prev_option() const;
 
     void release_file();
     void hook_file();

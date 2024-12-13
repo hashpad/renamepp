@@ -4,12 +4,7 @@
 #include <ncurses.h>
 #include <string>
 
-UI::UI(GUIState* gui_state)
-    : gui_state(gui_state)
-    , text_length(0)
-{
-}
-UI::UI(std::unique_ptr<GUIState> gui_state)
+UI::UI(std::unique_ptr<GUIState>&& gui_state)
     : gui_state(std::move(gui_state))
     , text_length(0)
 {
@@ -19,11 +14,13 @@ void UI::clear_screen()
     clear();
     this->text_length = 0;
     curs_set(0);
+    refresh();
 }
 void UI::append(const std::string& txt)
 {
     mvprintw(0, this->text_length, "%s", txt.c_str());
     text_length += txt.length();
+    refresh();
 }
 std::string UI::prompt(const std::string& prompt)
 {
@@ -34,6 +31,7 @@ std::string UI::prompt(const std::string& prompt)
     mvgetstr(0, text_length, input_value);
     noecho();
 
+    refresh();
     return std::string(input_value);
 }
 
@@ -52,11 +50,11 @@ void UI::show_menu(int highlighted_option)
     }
     refresh();
 }
-GUIState* const UI::get_gui_state() const
+GUIState& UI::get_gui_state() const
 {
-    return this->gui_state.get();
+    return *this->gui_state.get();
 }
-void UI::set_gui_state(GUIState* gui_state)
+void UI::set_gui_state(std::unique_ptr<GUIState>&& gui_state)
 {
-    this->gui_state.reset(gui_state);
+    this->gui_state = std::move(gui_state);
 }

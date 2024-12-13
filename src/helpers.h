@@ -15,7 +15,7 @@ namespace helpers {
 
 inline int open_file(const std::string& filepath)
 {
-    std::string command = "feh '" + filepath + "'";
+    std::string command = "xdg-open '" + filepath + "'";
     int return_code = std::system(command.c_str());
     if (return_code != 0)
         std::cerr << "Error: could not open file with xdg-open" << std::endl;
@@ -30,16 +30,17 @@ inline std::vector<std::filesystem::path> list_dirs_in_path(const std::filesyste
         }
     else {
         std::cerr << "Invalid directory: " << path << std::endl;
+        std::exit(EXIT_FAILURE);
     }
     return paths;
 }
 
-inline std::vector<std::filesystem::path> filter(std::vector<std::filesystem::path> paths, std::vector<std::string> exts)
+inline std::vector<std::filesystem::path> filter_files_by_exts(std::vector<std::filesystem::path> paths, std::vector<std::string> exts)
 {
     std::vector<std::filesystem::path> filtered_exts;
     std::copy_if(paths.begin(), paths.end(), std::back_inserter(filtered_exts), [&](const std::filesystem::path& path) {
         for (const auto& ext : exts) {
-            if (path.extension().string() == ext)
+            if (path.extension().string() == "." + ext)
                 return true;
         }
         return false;

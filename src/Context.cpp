@@ -1,23 +1,28 @@
 #include "Context.h"
 #include "States.h"
+#include "helpers.h"
 #include <memory>
 
-Context::Context()
+Context::Context(const std::filesystem::path& path, const std::vector<std::string>& file_types)
     : ui(UI(std::make_unique<MenuState>()))
+    , running(true)
+
 {
+    this->files = helpers::list_dirs_in_path(path);
+    if (file_types.size() != 0) {
+        this->files = helpers::filter_files_by_exts(this->files, file_types);
+    }
+
+    if (this->files.size() == 0) {
+        std::cerr << "Error: No files were found" << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
     this->cursorState = CursorState::HIDDEN;
-}
-void Context::init()
-{
     initscr();
 
-    this->set_current_option(Option::RENAME);
-
-    std::vector<std::filesystem::path> all_files = helpers::list_dirs_in_path(".");
-    this->files = helpers::filter(all_files, { ".jpg", ".png" });
-
     this->current_file_index = 0;
-    while (this->current_file_index < static_cast<int>(files.size())) {
+    while (this->running && this->current_file_index < static_cast<int>(files.size())) {
         if (this->current_file_index < 0) {
             this->current_file_index = 0;
             continue;
@@ -29,8 +34,9 @@ void Context::init()
 
         this->hook_file();
         this->set_opened_once(false);
+        this->set_current_option(Option::RENAME);
         while (this->is_file_hooked()) {
-            this->ui.get_gui_state()->script(*this);
+            this->ui.get_gui_state().script(*this);
         }
     }
 }
@@ -38,6 +44,11 @@ void Context::init()
 UI& Context::get_ui()
 {
     return ui;
+}
+void Context::stop()
+{
+    this->release_file();
+    this->running = false;
 }
 
 const std::string& Context::get_current_filename() const
@@ -92,14 +103,30 @@ void Context::set_current_option(int value)
 {
     this->current_option = value;
 }
+
+int Context::get_current_option() const
+{
+    return this->current_option;
+}
+int Context::get_next_option() const
+{
+    return (this->get_current_option() + 1) % OPTIONS_STRING.size();
+}
+int Context::get_prev_option() const
+{
+    int next { 0 };
+    if (this->get_current_option() - 1 < 0)
+        next = OPTIONS_STRING.size() - 1;
+    else {
+        next = (this->get_current_option() - 1) % OPTIONS_STRING.size();
+    }
+    return next;
+}
+
 void Context::release_file()
 {
     this->file_hooked = false;
 }
-int Context::get_current_option() const
-{
-    return this->current_option;
-};
 
 void Context::hook_file()
 {
